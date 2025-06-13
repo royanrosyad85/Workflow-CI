@@ -1,0 +1,16 @@
+name: water-potability-ml
+
+conda_env: conda.yaml
+
+entry_points:
+  main:
+    command: "python modelling.py"
+    
+  train:
+    parameters:
+      data_path: {type: string, default: "water_potability_preprocessed.csv"}
+      experiment_name: {type: string, default: "Water_Potability_CI"}
+    command: "python modelling.py --data_path {data_path} --experiment_name {experiment_name}"
+    
+  docker:
+    command: "python modelling.py"
