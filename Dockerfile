@@ -1,26 +1,29 @@
-FROM python:3.11-slim
+FROM python:3.10-slim
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+# Set environment variables
+ENV DOCKER_ENV=true
+ENV PYTHONUNBUFFERED=1
 
-# Install MLflow
-RUN pip install mlflow[extras]==2.22.0
-
-# Copy requirements and install Python dependencies
+# Copy requirements file
 COPY requirements.txt .
+
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy MLproject files
-COPY MLProject/ ./
+# Copy MLProject files
+COPY MLProject/ ./MLProject/
 
-# Expose MLflow port
-EXPOSE 5000
+# Copy scripts
+COPY scripts/ ./scripts/
 
-# Default command to run MLflow project
-CMD ["mlflow", "run", ".", "--no-conda"]
+# Create model output directory
+RUN mkdir -p model_output
+
+# Set working directory to MLProject
+WORKDIR /app/MLProject
+
+# Default command
+CMD ["python", "modelling.py"]
