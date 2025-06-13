@@ -54,6 +54,9 @@ jobs:
         docker build -t ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }} .
         docker build -t ${{ env.DOCKER_IMAGE_NAME }}:latest .
 
+    - name: Create model output directory
+      run: mkdir -p model_output
+
     - name: Run ML training with MLflow
       env:
         DAGSHUB_USERNAME: ${{ secrets.DAGSHUB_USERNAME }}
@@ -74,7 +77,6 @@ jobs:
           -e GITHUB_REF="${{ github.ref }}" \
           -e GITHUB_REPOSITORY="${{ github.repository }}" \
           -e GITHUB_ACTOR="${{ github.actor }}" \
-          -v $(pwd)/water_potability_preprocessed.csv:/app/MLProject/water_potability_preprocessed.csv \
           -v $(pwd)/model_output:/app/model_output \
           ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
 
@@ -113,7 +115,7 @@ jobs:
 
     - name: Deploy notification
       run: |
-        echo "Model training completed successfully!"
-        echo "MLflow tracking: https://dagshub.com/${{ secrets.DAGSHUB_USERNAME }}/Water-Quality-Tracking-Model.mlflow"
-        echo "Docker image: ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}"
-        echo "Artifacts uploaded to Google Drive"
+        echo "🚀 Model training completed successfully!"
+        echo "📊 MLflow tracking: https://dagshub.com/${{ secrets.DAGSHUB_USERNAME }}/Water-Quality-Tracking-Model.mlflow"
+        echo "🐳 Docker image: ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}"
+        echo "📁 Artifacts uploaded to Google Drive"
