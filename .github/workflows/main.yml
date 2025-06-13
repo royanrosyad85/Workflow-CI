@@ -96,7 +96,7 @@ jobs:
     - name: Setup Google Drive credentials
       if: success()
       run: |
-        echo "${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}" | base64 --decode > scripts/service_account.json
+        echo "${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}" | base64 -d > service_account.json
         # Verify file was created correctly (without showing content)
         ls -la scripts/service_account.json
 
@@ -105,7 +105,7 @@ jobs:
       run: |
         pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-python-client
         cd scripts
-        python upload-to-drive.py
+        python scripts/upload-to-drive.py
 
     - name: Push Docker image
       if: success()
