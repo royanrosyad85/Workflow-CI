@@ -77,8 +77,13 @@ jobs:
           -e GITHUB_REF="${{ github.ref }}" \
           -e GITHUB_REPOSITORY="${{ github.repository }}" \
           -e GITHUB_ACTOR="${{ github.actor }}" \
-          -v $(pwd)/model_output:/app/model_output \
+          -v $(pwd)/model_output:/app/MLProject/model_output \
           ${{ env.DOCKER_IMAGE_NAME }}:${{ github.sha }}
+
+    - name: List files in model_output
+      run: |
+        echo "Contents of model_output directory:"
+        ls -la model_output/
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
@@ -86,11 +91,14 @@ jobs:
         name: model-artifacts
         path: model_output/
         retention-days: 30
+        if-no-files-found: warn
 
-    - name: Setup Google Drive upload
+    - name: Setup Google Drive credentials
       if: success()
       run: |
-        echo '${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}' > scripts/service_account.json
+        echo "${{ secrets.GOOGLE_DRIVE_CREDENTIALS }}" | base64 --decode > scripts/service_account.json
+        # Verify file was created correctly (without showing content)
+        ls -la scripts/service_account.json
 
     - name: Upload to Google Drive
       if: success()
