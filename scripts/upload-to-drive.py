@@ -5,12 +5,19 @@ import os
 
 SERVICE_ACCOUNT_FILE = 'service_account.json'
 FOLDER_ID = "18cPLEVjDOW8rb0veQVZh8FXojPqFexmi"
-ARTIFACTS_DIR = "model_output"
+ARTIFACTS_DIR = "../model_output"  # Changed path to look in the parent directory
 
 SCOPES = ['https://www.googleapis.com/auth/drive.file']
 credentials = service_account.Credentials.from_service_account_file(
     SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 service = build('drive', 'v3', credentials=credentials)
+
+# Print working directory and listing for debugging
+print(f"Current working directory: {os.getcwd()}")
+print(f"Checking if {ARTIFACTS_DIR} exists: {os.path.exists(ARTIFACTS_DIR)}")
+if os.path.exists(ARTIFACTS_DIR):
+    print(f"Contents of {ARTIFACTS_DIR}:")
+    print(os.listdir(ARTIFACTS_DIR))
 
 for root, dirs, files in os.walk(ARTIFACTS_DIR):
     for filename in files:
